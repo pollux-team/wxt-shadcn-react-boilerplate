@@ -1,230 +1,226 @@
----
-name: React with Tailwind & shadcn
-description: Simple example extension using React, Tailwind CSS, and shadcn UI components.
----
+# WXT + React + shadcn/ui Boilerplate
 
-# WXT + React + Tailwind + Shadcn
+A modern browser extension boilerplate featuring WXT, React 19, Tailwind CSS v4, and shadcn/ui components. Built with Bun for blazing-fast development.
 
-This example demonstrates how to integrate React 19+, Tailwind CSS v4+, and shadcn UI components within a WXT extension.
+[![Release](https://github.com/pollux-team/wxt-shadcn-react-boilerplate/actions/workflows/release.yml/badge.svg)](https://github.com/pollux-team/wxt-shadcn-react-boilerplate/actions/workflows/release.yml)
 
-## Installation Walkthrough
+## ✨ Features
 
-1. **Initialize a new WXT project:**
+- 🚀 **[WXT](https://wxt.dev/)** - Next-gen web extension framework
+- ⚛️ **[React 19](https://react.dev/)** - Latest React with modern features
+- 🎨 **[Tailwind CSS v4](https://tailwindcss.com/)** - Utility-first CSS framework
+- 🧩 **[shadcn/ui](https://ui.shadcn.com/)** - Beautiful, accessible component library
+- ⚡ **[Bun](https://bun.sh/)** - Fast all-in-one JavaScript runtime
+- 🔧 **TypeScript** - Type-safe development
+- 🎯 **Pre-configured** - Ready to use with sensible defaults
+- 🔄 **CI/CD** - Automated releases with GitHub Actions
 
-   Open your terminal and run the following command to create a new WXT project with the React template:
+## 📦 What's Included
 
-   ```sh
-   pnpm dlx wxt@latest init
-   ```
-
-   The CLI will guide you through the project setup. Choose the `react` template and your preferred package manager. For this example, I use pnpm.
-
-   ```
-   WXT 0.20.6
-   ℹ Initializing new project
-   ✔ Project Directory … react-shadcn
-   ✔ Choose a template › react
-   ✔ Package Manager › pnpm
-   ✔ Downloading template
-   ✨ WXT project created with the react template.
-   Next steps:
-     1. cd react-shadcn
-     2. pnpm install
-   ```
-
-2. **Navigate to the project directory and install dependencies:**
-
-   ```sh
-   cd react-shadcn
-   pnpm install
-   ```
-
-3. **Install Tailwind CSS and `@tailwindcss/vite`:**
-
-   You should follow the official Tailwind Vite installation [guide](https://tailwindcss.com/docs/installation/using-vite). As the time of creating this example, it asked to run the following command:
-
-   ```sh
-   pnpm install tailwindcss @tailwindcss/vite
-   ```
-
-4. **Configure Tailwind CSS in `wxt.config.ts`:**
-
-    To configure Tailwind CSS, modify `wxt.config.ts`. While official documentation says to change `vite.config.ts`, WXT configures Vite internally, so you need to update `wxt.config.ts` instead. This file manages the build process. To integrate Tailwind, add it as a Vite plugin within the wxt.config.ts file, as shown here:
-
-   ```ts
-   import { defineConfig } from "wxt";
-   import tailwindcss from "@tailwindcss/vite";
-   // See https://wxt.dev/api/config.html
-   export default defineConfig({
-     modules: ["@wxt-dev/module-react"],
-     vite: () => ({
-       plugins: [tailwindcss()],
-     }),
-   });
-   ```
-
-5. **Create a `tailwind.css` file:**
-
-   Create a `tailwind.css` file in your `assets` directory (or the root directory of your project if you don't have an assets dir) with the following content:
-
-   ```css
-   @import "tailwindcss";
-   ```
-
-6. **Import `tailwind.css`:**
-
-   You can now easily import the `tailwind.css` file in your React components:
-
-   ```ts
-   import "@/assets/tailwind.css"; // Adjust the path if necessary
-   ```
-
-   or you can include it directly in your `index.html` file:
-
-   ```html
-   <!doctype html>
-   <html>
-     <head>
-       <meta charset="UTF-8" />
-       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-       <link href="@/assets/tailwind.css" rel="stylesheet" />
-     </head>
-     <body></body>
-   </html>
-   ```
-
-   Now you can start styling your components with Tailwind CSS classes.
-
-7. **Install and Configure Shadcn UI:**
-
-   Integrating Shadcn UI requires a few extra steps. You can choose either the [manual installation](https://ui.shadcn.com/docs/installation/manual) or the [Vite installation](https://ui.shadcn.com/docs/installation/vite) method. Both of them have workarounds we need to do, however this guide will use the Vite installation method.
-
-   You also need to decide whether to stick with WXT's default project structure or introduce a `src/` directory to separate source code from configuration files. WXT provides documentation on adding a `src/` directory [here](https://wxt.dev/guide/essentials/project-structure.html#adding-a-src-directory). This guide will continue without a `src/` directory for simplicity.
-
-8. **Configure `tsconfig.json`:**
-
-   Before installing Shadcn UI components, you need to configure your `tsconfig.json` file. Add the following within the `compilerOptions` section:
-
-   ```json
-     "compilerOptions": {
-       "baseUrl": ".",
-       "paths": {
-         "@/*": ["./*"] // or "./src/*" if using src directory
-       }
-     }
-   ```
-
-9. **Configure `wxt.config.ts` for Alias Resolution:**
-
-   Update your `wxt.config.ts` to include an alias for resolving paths. Make sure to install `@types/node` for the `path` module: `pnpm add -D @types/node`
-
-   ```ts
-   import { defineConfig } from "wxt";
-   import tailwindcss from "@tailwindcss/vite";
-   import path from "path";
-
-   // See https://wxt.dev/api/config.html
-   export default defineConfig({
-     modules: ["@wxt-dev/module-react"],
-     vite: () => ({
-       plugins: [tailwindcss()],
-       resolve: {
-         alias: {
-           "@": path.resolve(__dirname, "./"), // or "./src" if using src directory
-         },
-       },
-     }),
-   });
-   ```
-
-10. **Temporarily Add `vite.config.ts` (Workaround for Shadcn CLI):**
-
-    The Shadcn CLI relies on detecting a `vite.config.ts` file to identify which framework to use. So before initializing the tool, we have to temporarily create a `vite.config.ts` file with the following content:
-
-    ```ts
-    import path from "path";
-    import react from "@vitejs/plugin-react";
-    import { defineConfig } from "vite";
-    import tailwindcss from "@tailwindcss/vite";
-    export default defineConfig({
-      plugins: [react(), tailwindcss()],
-      resolve: {
-        alias: {
-          "@": path.resolve(__dirname, "./"), // or "./src" if using src directory
-        },
-      },
-    });
-    ```
-
-    This file ensures that the Shadcn CLI correctly identifies your project as a Vite project and configures the alias. **This file should be deleted after the initialization.**
-
-11. **Initialize Shadcn UI:**
-
-    Run the Shadcn UI initialization command:
-
-    ```sh
-    pnpm dlx shadcn@latest init
-    ```
-
-    Answer the prompts in the CLI to configure Shadcn UI according to your preferences (color scheme, etc.).
-
-12. **Delete Temporary `vite.config.ts`:**
-
-    After Shadcn UI is initialized, you can safely delete the temporary `vite.config.ts` file you created in step 10.
-
-13. **Add Shadcn UI Components:**
-
-    You can now add Shadcn UI components using the CLI:
-
-    ```sh
-    pnpm dlx shadcn@latest add button
-    ```
-
-    This will install the button component and its dependencies. Repeat this command for any other components you wish to use.
-
-## Notes
-
-There are some potential conflicts with WXT's recommended configuration and best practices in this setup, particularly in `wxt.config.ts` and `tsconfig.json`.
-
-WXT advises against directly adding paths to `tsconfig.json` and prefers using the `alias` option in `wxt.config.ts` (see [WXT documentation](https://wxt.dev/guide/essentials/config/typescript.html#tsconfig-paths)). However, Shadcn currently fails to resolve paths correctly if they are only defined in `wxt.config.ts`. There is an [open issue](https://github.com/shadcn-ui/ui/issues/6020) about this in the Shadcn UI repository.
-
-**Therefore, the current approach of modifying both `tsconfig.json` and `wxt.config.ts` is a temporary workaround.**
-
-Ideally, the configuration should look like this:
-
-```diff
-// tsconfig.ts
-{
-  "extends": "./.wxt/tsconfig.json",
-  "compilerOptions": {
-    "allowImportingTsExtensions": true,
-    "jsx": "react-jsx",
--    "baseUrl": ".",
--    "paths": {
--      "@/*": ["./*"]
--    }
-  }
-}
+```
+├── .github/workflows/    # CI/CD workflows
+├── assets/              # Static assets (CSS, images)
+├── components/          # React components
+│   └── ui/             # shadcn/ui components
+├── entrypoints/        # Extension entry points
+│   └── popup/          # Popup UI
+├── lib/                # Utility functions
+├── public/             # Public assets (icons)
+├── components.json     # shadcn/ui configuration
+├── tsconfig.json       # TypeScript configuration
+├── vite.config.ts      # Vite config (for tooling)
+└── wxt.config.ts       # WXT configuration
 ```
 
-```diff
-// wxt.config.ts
+## 🚀 Quick Start
+
+### Prerequisites
+
+- [Bun](https://bun.sh/) installed on your system
+- Node.js 18+ (for compatibility)
+
+### Installation
+
+1. **Clone the repository:**
+
+   ```bash
+   git clone https://github.com/pollux-team/wxt-shadcn-react-boilerplate.git
+   cd wxt-shadcn-react-boilerplate
+   ```
+
+2. **Install dependencies:**
+
+   ```bash
+   bun install
+   ```
+
+3. **Start development:**
+
+   ```bash
+   bun run dev
+   ```
+
+   For Firefox:
+   ```bash
+   bun run dev:firefox
+   ```
+
+4. **Load the extension:**
+   - **Chrome/Edge**: Navigate to `chrome://extensions`, enable "Developer mode", click "Load unpacked", and select the `.output/chrome-mv3` directory
+   - **Firefox**: Navigate to `about:debugging#/runtime/this-firefox`, click "Load Temporary Add-on", and select any file in the `.output/firefox-mv2` directory
+
+## 📜 Available Scripts
+
+| Command | Description |
+|---------|-------------|
+| `bun run dev` | Start development server (Chrome) |
+| `bun run dev:firefox` | Start development server (Firefox) |
+| `bun run build` | Build for production (Chrome) |
+| `bun run build:firefox` | Build for production (Firefox) |
+| `bun run zip` | Create distributable ZIP (Chrome) |
+| `bun run zip:firefox` | Create distributable ZIP (Firefox) |
+| `bun run compile` | Type-check without emitting files |
+
+## 🎨 Adding shadcn/ui Components
+
+Add new components using the shadcn CLI:
+
+```bash
+bunx --bun shadcn@latest add button
+bunx --bun shadcn@latest add card
+bunx --bun shadcn@latest add dialog
+```
+
+Browse all available components at [ui.shadcn.com](https://ui.shadcn.com/).
+
+## 🏗️ Project Structure
+
+### Entry Points
+
+WXT uses an entry point-based structure. Each file in the `entrypoints/` directory becomes a part of your extension:
+
+- `popup/` - Extension popup UI
+- `background.ts` - Background service worker (add if needed)
+- `content.ts` - Content scripts (add if needed)
+
+Learn more about [WXT entry points](https://wxt.dev/guide/essentials/entrypoints.html).
+
+### Components
+
+- `components/ui/` - shadcn/ui components (auto-generated)
+- `components/` - Your custom components
+
+### Styling
+
+- `assets/tailwind.css` - Tailwind CSS imports
+- Tailwind v4 uses `@import "tailwindcss"` syntax
+- Import in your components: `import "@/assets/tailwind.css"`
+
+## 🔧 Configuration
+
+### Path Aliases
+
+The project uses `@/` as an alias for the root directory:
+
+```typescript
+import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
+```
+
+Configured in:
+- `tsconfig.json` - For TypeScript
+- `wxt.config.ts` - For WXT/Vite resolution
+- `vite.config.ts` - For shadcn CLI detection
+
+### Tailwind CSS
+
+Tailwind is configured via the Vite plugin in `wxt.config.ts`:
+
+```typescript
+import tailwindcss from "@tailwindcss/vite"
+
 export default defineConfig({
-  modules: ["@wxt-dev/module-react"],
-+  alias: {
-+    "@": path.resolve(__dirname, "./"),
-+  },
   vite: () => ({
     plugins: [tailwindcss()],
--    resolve: {
--      alias: {
--        "@": path.resolve(__dirname, "./"),
--      },
--    },
   }),
-});
+})
 ```
 
-However, this will not work correctly with Shadcn UI until the linked issue is resolved. Remember to monitor the linked issue in the Shadcn UI repository and update your configuration when a fix is available.
+### shadcn/ui
 
-For a more in-depth guide that goes through the manual installation process, please check this [detailed guide](https://aabidk.dev/tags/wxt/).
+Configuration is stored in `components.json`. Customize:
+- Component style (default: `radix-luma`)
+- Color scheme (default: `zinc`)
+- Icon library (default: `lucide`)
+
+## 🚢 Deployment & Releases
+
+### Automated Releases
+
+This boilerplate includes a GitHub Actions workflow for automated releases:
+
+1. **Update version** in `package.json`
+2. **Commit and push** your changes
+3. **Trigger release** via GitHub Actions:
+   - Go to Actions → Release → Run workflow
+   - Select branch (default: `main`)
+   - Click "Run workflow"
+
+The workflow will:
+- Build extensions for Chrome and Firefox
+- Create ZIP files
+- Create a GitHub release with version tag
+- Upload ZIP files as release assets
+
+### Manual Build
+
+```bash
+# Build for production
+bun run build
+bun run build:firefox
+
+# Create distribution ZIPs
+bun run zip
+bun run zip:firefox
+```
+
+Output files will be in `.output/` directory.
+
+## 📝 Important Notes
+
+### vite.config.ts
+
+The `vite.config.ts` file exists solely for shadcn CLI compatibility. WXT uses its own Vite configuration from `wxt.config.ts` for building the extension. The standalone Vite config won't interfere with your builds.
+
+### TypeScript Configuration
+
+Due to current limitations in shadcn/ui's path resolution ([issue #6020](https://github.com/shadcn-ui/ui/issues/6020)), paths must be defined in both `tsconfig.json` and `wxt.config.ts`. This is a temporary workaround until the issue is resolved.
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- [WXT](https://wxt.dev/) - Amazing web extension framework
+- [shadcn/ui](https://ui.shadcn.com/) - Beautiful component library
+- [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS
+- [React](https://react.dev/) - UI library
+- [Bun](https://bun.sh/) - Fast JavaScript runtime
+
+## 📚 Resources
+
+- [WXT Documentation](https://wxt.dev/)
+- [shadcn/ui Documentation](https://ui.shadcn.com/)
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
+- [React Documentation](https://react.dev/)
+- [Chrome Extension Documentation](https://developer.chrome.com/docs/extensions/)
+- [Firefox Extension Documentation](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions)
+
+---
+
+**Built with ❤️ by the Pollux Team**
